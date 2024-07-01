@@ -11,16 +11,16 @@ public class Utente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUtente;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "nome_utente")
     private String nomeUtente;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password")
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "email")
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "ruolo")
     private Ruolo ruolo;
 }

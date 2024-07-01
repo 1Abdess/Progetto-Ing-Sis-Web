@@ -21,9 +21,9 @@ public class ElementoCarrello {
     @JoinColumn(name = "id_prodotto")
     private Prodotto prodotto;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "quantita")
     private int quantita;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2, name = "prezzo_unitario")
     private BigDecimal prezzoUnitario;
 }

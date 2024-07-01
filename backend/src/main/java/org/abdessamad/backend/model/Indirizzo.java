@@ -15,18 +15,18 @@ public class Indirizzo {
     @JoinColumn(name = "id_utente")
     private Utente utente;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "via")
     private String via;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "citta")
     private String citta;
 
-    @Column
+    @Column(name = "stato")
     private String stato;
 
-    @Column
+    @Column(name = "codice_postale")
     private String codicePostale;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "paese")
     private String paese;
 }
