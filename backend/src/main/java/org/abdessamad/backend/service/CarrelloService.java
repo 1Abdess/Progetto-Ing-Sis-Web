@@ -1,5 +1,6 @@
 package org.abdessamad.backend.service;
 
+import jakarta.transaction.Transactional;
 import org.abdessamad.backend.model.Carrello;
 import org.abdessamad.backend.model.ElementoCarrello;
 import org.abdessamad.backend.model.Prodotto;
@@ -87,6 +88,85 @@ public class CarrelloService {
 
         List<Prodotto> prodotti = new ArrayList<>();
         for (ElementoCarrello elemento : wishList.getElementi()) {
+            prodotti.add(elemento.getProdotto());
+        }
+        return prodotti;
+    }
+
+    public void addProductToShoppingCart(Long userId, Long productId, int quantita) {
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+        Prodotto prodotto = prodottoRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Prodotto non trovato"));
+
+        if (prodotto.getQuantitaDisponibile() < quantita || quantita <= 0) {
+            throw new RuntimeException("Quantità non disponibile");
+        }
+
+        List<Carrello> shoppingCarts = carrelloRepository.findByUtenteAndTipo(utente, "shopping");
+        Carrello shoppingCart;
+        if (shoppingCarts.isEmpty()) {
+            shoppingCart = new Carrello();
+            shoppingCart.setUtente(utente);
+            shoppingCart.setTipo("shopping");
+            shoppingCart.setTotale(0);
+        } else {
+            shoppingCart = shoppingCarts.get(0);  // Prendi il primo carrello trovato
+        }
+
+        ElementoCarrello elemento = new ElementoCarrello();
+        elemento.setCarrello(shoppingCart);
+        elemento.setProdotto(prodotto);
+        elemento.setQuantita(quantita);
+        elemento.setPrezzoUnitario(BigDecimal.valueOf(prodotto.getPrezzo()));
+
+        shoppingCart.getElementi().add(elemento);
+        shoppingCart.setTotale(shoppingCart.getTotale() + prodotto.getPrezzo() * quantita);
+
+        carrelloRepository.save(shoppingCart);
+    }
+
+    @Transactional
+    public void purchaseCart(Long userId) {
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        List<Carrello> shoppingCarts = carrelloRepository.findByUtenteAndTipo(utente, "shopping");
+        if (shoppingCarts.isEmpty()) {
+            throw new RuntimeException("Carrello non trovato");
+        }
+
+        Carrello shoppingCart = shoppingCarts.get(0);  // Prendi il primo carrello trovato
+
+        for (ElementoCarrello elemento : shoppingCart.getElementi()) {
+            Prodotto prodotto = elemento.getProdotto();
+            int quantitaAcquistata = elemento.getQuantita();
+            if (prodotto.getQuantitaDisponibile() < quantitaAcquistata) {
+                throw new RuntimeException("Quantità non disponibile per il prodotto: " + prodotto.getNome());
+            }
+            prodotto.setQuantitaDisponibile(prodotto.getQuantitaDisponibile() - quantitaAcquistata);
+            prodottoRepository.save(prodotto);
+        }
+
+        // Svuota il carrello dopo l'acquisto
+        shoppingCart.getElementi().clear();
+        shoppingCart.setTotale(0);
+        carrelloRepository.save(shoppingCart);
+    }
+
+    public List<Prodotto> getShoppingCartByUserId(Long userId) {
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        List<Carrello> shoppingCarts = carrelloRepository.findByUtenteAndTipo(utente, "shopping");
+        if (shoppingCarts.isEmpty()) {
+            return new ArrayList<>();  // Restituisce una lista vuota se non esiste un carrello
+        }
+
+        Carrello shoppingCart = shoppingCarts.get(0);  // Prendi il primo carrello trovato
+
+        List<Prodotto> prodotti = new ArrayList<>();
+        for (ElementoCarrello elemento : shoppingCart.getElementi()) {
             prodotti.add(elemento.getProdotto());
         }
         return prodotti;

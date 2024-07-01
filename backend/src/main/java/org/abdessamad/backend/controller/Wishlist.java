@@ -15,7 +15,7 @@ public class Wishlist {
     @Autowired
     private CarrelloService wishListService;
 
-    @PostMapping("/add")
+    @PostMapping("/aggiungi")
     public ResponseEntity<String> addProductToWishList(@RequestParam Long userId, @RequestParam Long productId) {
         try {
             wishListService.addProductToWishList(userId, productId);
@@ -25,7 +25,7 @@ public class Wishlist {
         }
     }
 
-    @DeleteMapping("/remove")
+    @DeleteMapping("/rimuovi")
     public ResponseEntity<String> removeProductFromWishList(@RequestParam Long userId, @RequestParam Long productId) {
         try {
             wishListService.removeProductFromWishList(userId, productId);
