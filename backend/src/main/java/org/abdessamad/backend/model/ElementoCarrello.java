@@ -2,7 +2,6 @@ package org.abdessamad.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -11,19 +10,20 @@ import java.math.BigDecimal;
 public class ElementoCarrello {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idElementoCarrello;
+    @Column(name = "id_elemento_carrello")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_carrello")
+    @JoinColumn(name = "id_carrello", nullable = false)
     private Carrello carrello;
 
     @ManyToOne
-    @JoinColumn(name = "id_prodotto")
+    @JoinColumn(name = "id_prodotto", nullable = false)
     private Prodotto prodotto;
 
-    @Column(nullable = false, name = "quantita")
+    @Column(name = "quantita", nullable = false)
     private int quantita;
 
-    @Column(nullable = false, precision = 10, scale = 2, name = "prezzo_unitario")
+    @Column(name = "prezzo_unitario", nullable = false)
     private BigDecimal prezzoUnitario;
 }

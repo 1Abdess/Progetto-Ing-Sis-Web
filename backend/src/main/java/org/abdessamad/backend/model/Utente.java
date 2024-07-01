@@ -4,23 +4,30 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "utenti")
+@Table(name = "Utenti")
 @Data
 public class Utente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUtente;
+    @Column(name = "id_utente")
+    private Long id;
 
-    @Column(nullable = false, unique = true, name = "nome_utente")
+    @Column(name = "nome_utente", unique = true, nullable = false)
     private String nomeUtente;
 
-    @Column(nullable = false, name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true, name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "ruolo")
+    @Column(name = "ruolo", nullable = false)
     private Ruolo ruolo;
+
+    public enum Ruolo {
+        pubblico,
+        registrato,
+        amministratore
+    }
 }

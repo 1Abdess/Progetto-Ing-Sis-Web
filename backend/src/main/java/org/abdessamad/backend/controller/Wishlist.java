@@ -11,10 +11,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/wishlist")
 public class Wishlist {
+
     @Autowired
     private CarrelloService wishListService;
 
-    // Aggiungi prodotto alla wishlist di un utente
     @PostMapping("/add")
     public ResponseEntity<String> addProductToWishList(@RequestParam Long userId, @RequestParam Long productId) {
         try {
@@ -25,7 +25,6 @@ public class Wishlist {
         }
     }
 
-    // Rimuovi prodotto dalla wishlist di un utente
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeProductFromWishList(@RequestParam Long userId, @RequestParam Long productId) {
         try {
@@ -36,12 +35,11 @@ public class Wishlist {
         }
     }
 
-    // Visualizza tutti i prodotti nella wishlist di un utente
     @GetMapping("/{userId}")
     public ResponseEntity<List<Prodotto>> getWishListByUserId(@PathVariable Long userId) {
         try {
             List<Prodotto> prodotti = wishListService.getWishListByUserId(userId);
-            return ResponseEntity.ok(prodotti);
+            return ResponseEntity.ok(prodotti);  // Anche una lista vuota sarà restituita come JSON vuoto
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }

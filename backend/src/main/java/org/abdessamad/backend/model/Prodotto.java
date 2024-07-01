@@ -2,28 +2,26 @@ package org.abdessamad.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "prodotti")
+@Table(name = "Prodotti")
 @Data
-@NoArgsConstructor
 public class Prodotto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_prodotto")
-    private Long idProdotto;
+    private Long id;
 
-    @Column(nullable = false, name = "nome")
+    @Column(name = "nome", nullable = false)
     private String nome;
 
-    @Column(nullable = false, name = "descrizione")
+    @Column(name = "descrizione")
     private String descrizione;
 
-    @Column(nullable = false, name = "prezzo")
+    @Column(name = "prezzo", nullable = false)
     private double prezzo;
 
-    @Column(nullable = false, name = "quantita_disponibile")
+    @Column(name = "quantita_disponibile", nullable = false)
     private int quantitaDisponibile;
 
     @Column(name = "categoria")
@@ -31,12 +29,4 @@ public class Prodotto {
 
     @Column(name = "marca")
     private String marca;
-
-    public Long getId() {
-        return idProdotto;
-    }
-
-    public void setId(Long id) {
-        this.idProdotto = id;
-    }
 }

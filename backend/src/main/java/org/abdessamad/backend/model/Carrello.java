@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -14,29 +13,19 @@ import java.util.List;
 public class Carrello {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCarrello;
+    @Column(name = "id_carrello")
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "id_utente")
+    @ManyToOne
+    @JoinColumn(name = "id_utente", nullable = false)
     private Utente utente;
 
-    @OneToMany(mappedBy = "carrello")
-    private List<ElementoCarrello> elementiCarrello;
+    @OneToMany(mappedBy = "carrello", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ElementoCarrello> elementi;
+
+    @Column(name = "totale", nullable = false)
+    private double totale;
 
     @Column(name = "tipo")
     private String tipo;
-
-    public BigDecimal calcolaTotale() {
-        return elementiCarrello.stream()
-                .map(item -> item.getPrezzoUnitario().multiply(new BigDecimal(item.getQuantita())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    // Getter e setter per elementi
-    public List<ElementoCarrello> getElementi() {
-        return elementiCarrello;
-    }
-    public void setElementi(List<ElementoCarrello> elementi) {
-        this.elementiCarrello = elementi;
-    }
 }
