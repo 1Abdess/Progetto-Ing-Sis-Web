@@ -2,10 +2,12 @@ package org.abdessamad.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "prodotti")
 @Data
+@NoArgsConstructor
 public class Prodotto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +31,12 @@ public class Prodotto {
 
     @Column(name = "marca")
     private String marca;
+
+    public Long getId() {
+        return idProdotto;
+    }
+
+    public void setId(Long id) {
+        this.idProdotto = id;
+    }
 }
