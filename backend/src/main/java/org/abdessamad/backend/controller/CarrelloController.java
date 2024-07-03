@@ -11,13 +11,12 @@ import org.abdessamad.backend.model.Carrello;
 import java.util.List;
 
 @RestController
-@RequestMapping("/carrello")
 public class CarrelloController {
 
     @Autowired
     private CarrelloService carrelloService;
 
-    @PostMapping("/aggiungi")
+    @PostMapping("/utente/carrello/aggiungi")
     public ResponseEntity<String> addProductToShoppingCart(@RequestParam Long userId, @RequestParam Long productId, @RequestParam int quantita) {
         try {
             carrelloService.addProductToShoppingCart(userId, productId, quantita);
@@ -27,7 +26,7 @@ public class CarrelloController {
         }
     }
 
-    @PostMapping("/acquista")
+    @PostMapping("/utente/carrello/acquista")
     public ResponseEntity<String> purchaseCart(@RequestParam Long userId) {
         try {
             carrelloService.purchaseCart(userId);
@@ -37,7 +36,7 @@ public class CarrelloController {
         }
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/utente/carrello/{userId}")
     public ResponseEntity<?> getShoppingCartByUtenteId(@PathVariable Long userId) {
         try {
             List<Prodotto> prodotti = carrelloService.getShoppingCartByUtenteId(userId);
@@ -47,20 +46,20 @@ public class CarrelloController {
         }
     }
 
-    @GetMapping("/utente/{userId}/stato")
+    @GetMapping("/utente/carrello/{userId}/stato")
     public ResponseEntity<List<CarrelloDto>> getOrdiniByStato(@PathVariable Long userId, @RequestParam String stato) {
         List<CarrelloDto> ordini = carrelloService.getOrdiniByUtenteIdAndStato(userId, stato);
         return ResponseEntity.ok(ordini);
     }
 
-    @GetMapping("/utente/{userId}/storico")
+    @GetMapping("/utente/carrello/{userId}/storico")
     public ResponseEntity<List<CarrelloDto>> getStoricoOrdini(@PathVariable Long userId) {
         List<CarrelloDto> ordini = carrelloService.getStoricoOrdiniByUtenteId(userId);
         return ResponseEntity.ok(ordini);
     }
 
 
-    @PostMapping("/admin/{ordineId}/consegna")
+    @PostMapping("/admin/carrello/{ordineId}/consegna")
     public ResponseEntity<String> markAsDelivered(@PathVariable Long ordineId) {
         try {
             carrelloService.markAsDelivered(ordineId);

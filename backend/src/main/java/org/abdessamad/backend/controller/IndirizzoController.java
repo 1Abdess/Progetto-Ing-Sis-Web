@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/indirizzo")
+@RequestMapping("/utente/indirizzo")
 public class IndirizzoController {
     @Autowired
     private IndirizzoService indirizzoService;

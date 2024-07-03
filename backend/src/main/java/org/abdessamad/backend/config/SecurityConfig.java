@@ -30,7 +30,16 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/autenticazione/**").permitAll()
+                        // Disponibile per tutti gli utenti:
+                        .requestMatchers("/autenticazione/**").permitAll()
+                        .requestMatchers("/prodotti").permitAll()
+
+                        // Disponibile per gli utenti registrati:
+                        .requestMatchers("/utente/**").hasAnyAuthority("registrato", "amministratore")
+
+                        // Disponibile per gli amministratori:
+                        .requestMatchers("/admin/**").hasAuthority("amministratore")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

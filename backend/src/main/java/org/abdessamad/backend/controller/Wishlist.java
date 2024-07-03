@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/wishlist")
+@RequestMapping("/utente/wishlist")
 public class Wishlist {
 
     @Autowired
