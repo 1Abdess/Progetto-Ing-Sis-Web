@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "Prodotti")
+@Table(name = "prodotti")
 @Data
 public class Prodotto {
     @Id
@@ -29,4 +29,7 @@ public class Prodotto {
 
     @Column(name = "marca")
     private String marca;
+
+    @Column(name = "bloccato", nullable = false)
+    private boolean bloccato = false;
 }

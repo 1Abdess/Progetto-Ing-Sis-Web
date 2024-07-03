@@ -9,16 +9,17 @@ import lombok.Data;
 public class Indirizzo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idIndirizzo;
+    @Column(name = "id_indirizzo")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_utente")
+    @JoinColumn(name = "id_utente", nullable = false)
     private Utente utente;
 
-    @Column(nullable = false, name = "via")
+    @Column(name = "via", nullable = false)
     private String via;
 
-    @Column(nullable = false, name = "citta")
+    @Column(name = "citta", nullable = false)
     private String citta;
 
     @Column(name = "stato")
@@ -27,6 +28,6 @@ public class Indirizzo {
     @Column(name = "codice_postale")
     private String codicePostale;
 
-    @Column(nullable = false, name = "paese")
+    @Column(name = "paese", nullable = false)
     private String paese;
 }

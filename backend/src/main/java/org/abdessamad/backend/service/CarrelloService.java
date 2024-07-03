@@ -1,6 +1,8 @@
 package org.abdessamad.backend.service;
 
 import jakarta.transaction.Transactional;
+import org.abdessamad.backend.dto.CarrelloDto;
+import org.abdessamad.backend.dto.ElementoCarrelloDto;
 import org.abdessamad.backend.model.Carrello;
 import org.abdessamad.backend.model.ElementoCarrello;
 import org.abdessamad.backend.model.Prodotto;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarrelloService {
@@ -109,7 +112,7 @@ public class CarrelloService {
             shoppingCart = new Carrello();
             shoppingCart.setUtente(utente);
             shoppingCart.setTipo("shopping");
-            shoppingCart.setTotale(0);
+            shoppingCart.setTotale(BigDecimal.ZERO);
         } else {
             shoppingCart = shoppingCarts.get(0);  // Prendi il primo carrello trovato
         }
@@ -121,7 +124,7 @@ public class CarrelloService {
         elemento.setPrezzoUnitario(BigDecimal.valueOf(prodotto.getPrezzo()));
 
         shoppingCart.getElementi().add(elemento);
-        shoppingCart.setTotale(shoppingCart.getTotale() + prodotto.getPrezzo() * quantita);
+        shoppingCart.setTotale(shoppingCart.getTotale().add(BigDecimal.valueOf(prodotto.getPrezzo()).multiply(BigDecimal.valueOf(quantita))));
 
         carrelloRepository.save(shoppingCart);
     }
@@ -150,11 +153,11 @@ public class CarrelloService {
 
         // Svuota il carrello dopo l'acquisto
         shoppingCart.getElementi().clear();
-        shoppingCart.setTotale(0);
+        shoppingCart.setTotale(BigDecimal.ZERO);
         carrelloRepository.save(shoppingCart);
     }
 
-    public List<Prodotto> getShoppingCartByUserId(Long userId) {
+    public List<Prodotto> getShoppingCartByUtenteId(Long userId) {
         Utente utente = utenteRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
@@ -170,5 +173,52 @@ public class CarrelloService {
             prodotti.add(elemento.getProdotto());
         }
         return prodotti;
+    }
+
+    @Transactional
+    public void markAsDelivered(Long ordineId) {
+        Carrello ordine = carrelloRepository.findById(ordineId)
+                .orElseThrow(() -> new RuntimeException("Ordine non trovato"));
+        ordine.setStato("consegnato");
+        carrelloRepository.save(ordine);
+    }
+
+    public List<CarrelloDto> getOrdiniByUtenteIdAndStato(Long userId, String stato) {
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        List<Carrello> ordini = carrelloRepository.findByUtenteAndTipoAndStato(utente, "shopping", stato);
+
+        return ordini.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<CarrelloDto> getStoricoOrdiniByUtenteId(Long userId) {
+        Utente utente = utenteRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        List<Carrello> ordini = carrelloRepository.findByUtenteAndTipo(utente, "shopping");
+
+        return ordini.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    private CarrelloDto convertToDTO(Carrello carrello) {
+        CarrelloDto dto = new CarrelloDto();
+        dto.setId(carrello.getId());
+        dto.setEmail(carrello.getUtente().getEmail());
+        dto.setElementi(carrello.getElementi().stream().map(this::convertToDTO).collect(Collectors.toList()));
+        dto.setTotale(carrello.getElementi().stream()
+                .map(elemento -> elemento.getPrezzoUnitario().multiply(BigDecimal.valueOf(elemento.getQuantita())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        dto.setStato(carrello.getStato());  // Aggiungi il campo stato al DTO
+        return dto;
+    }
+
+    private ElementoCarrelloDto convertToDTO(ElementoCarrello elemento) {
+        ElementoCarrelloDto dto = new ElementoCarrelloDto();
+        dto.setId(elemento.getId());
+        dto.setNomeProdotto(elemento.getProdotto().getNome());
+        dto.setQuantita(elemento.getQuantita());
+        dto.setPrezzoUnitario(elemento.getPrezzoUnitario());
+        return dto;
     }
 }

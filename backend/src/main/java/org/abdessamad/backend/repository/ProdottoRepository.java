@@ -14,6 +14,7 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Long> {
             "WHERE (:categoria IS NULL OR p.categoria = :categoria) AND (:marca IS NULL OR p.marca = :marca)" +
             "ORDER BY p.categoria, p.marca"
     )
-
     List<Prodotto> findByCategoryAndBrand(@Param("categoria") String categoria, @Param("marca") String marca);
+
+    List<Prodotto> findByBloccatoFalse();
 }

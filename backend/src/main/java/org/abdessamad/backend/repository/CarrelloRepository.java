@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CarrelloRepository extends JpaRepository<Carrello, Long> {
     List<Carrello> findByUtenteAndTipo(Utente utente, String tipo);
-
+    List<Carrello> findByUtenteAndTipoAndStato(Utente utente, String tipo, String stato);
 }

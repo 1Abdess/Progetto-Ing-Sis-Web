@@ -2,11 +2,17 @@ package org.abdessamad.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
-@Table(name = "Utenti")
+@Table(name = "utenti")
 @Data
-public class Utente {
+public class Utente implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_utente")
@@ -25,9 +31,42 @@ public class Utente {
     @Column(name = "ruolo", nullable = false)
     private Ruolo ruolo;
 
+    @Column(name = "bloccato", nullable = false)
+    private boolean bloccato;
+
     public enum Ruolo {
         pubblico,
         registrato,
         amministratore
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(ruolo.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !bloccato;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

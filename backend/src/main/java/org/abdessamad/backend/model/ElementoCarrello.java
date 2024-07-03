@@ -1,11 +1,13 @@
 package org.abdessamad.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Elementi_Carrello")
+@Table(name = "elementi_carrello")
 @Data
 public class ElementoCarrello {
     @Id
@@ -15,6 +17,7 @@ public class ElementoCarrello {
 
     @ManyToOne
     @JoinColumn(name = "id_carrello", nullable = false)
+    @JsonBackReference
     private Carrello carrello;
 
     @ManyToOne
