@@ -41,12 +41,17 @@ public class AutenticazioneController {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
             final String jwt = jwtUtil.generateToken(userDetails);
 
-            return ResponseEntity.ok(new AuthenticationResponse(jwt));
-        } catch (UsernameNotFoundException e) {
+            Utente utente = (Utente) userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+
+            return ResponseEntity.ok(new AuthenticationResponse(jwt, utente.getId()));
+        }
+        catch (UsernameNotFoundException e) {
             return ResponseEntity.status(404).body("Utente non trovato.");
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return ResponseEntity.status(500).body("Errore del server durante l'autenticazione.");
         }
     }
